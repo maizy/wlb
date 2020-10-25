@@ -13,7 +13,7 @@
 
 <body>
 
-  <h1>WLB</h1>
+  <h1>WLB <span class="app-version">v0.1-alpha</span></h1>
 
   <div class="warning">Use modern browser with JavaScript support.</div>
 
@@ -21,14 +21,27 @@
     <div id="input" class="grid-cell">
       <h3>Worktime</h3>
       <textarea class="input-area" id="time-input"></textarea>
+      <div class="description">
+        <p>One work period per line. Only the 24-hour clock format is supported for now.</p>
+        <p>If an end time is ommited current time is assumed.</p>
+        <p>Try use any time format you like.</p>
+        <p>Example:<br/>
+        <pre class="input-example">9-15 14-45
+15:00 - 15:30
+16 - 17
+18</pre>
+        </p>
+        <p>All entred data are saved localy in your browser only.</p>
+      </div>
     </div>
     <div id="days" class="grid-cell">
       <div id="current-day">
         <h3>Today</h3>
+        <div id="today-periods"></div>
       </div>
-      <div id="previous-days">
-        <h3>Previous days</h3>
-      </div>
+<!--      <div id="previous-days">-->
+<!--        <h3>Previous days</h3>-->
+<!--      </div>-->
     </div>
   </div>
 
