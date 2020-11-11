@@ -200,7 +200,7 @@ if (window.wlb === undefined) {
       this.todayPeriods.appendChild(noDataDiv);
     };
 
-    Today.prototype.renderData = function (periods) {
+    Today.prototype.renderData = function (enriched) {
       const table = document.createElement("table");
       table.id = "today-data";
       table.className = "periods-table";
@@ -220,9 +220,7 @@ if (window.wlb === undefined) {
 
       table.append(header);
 
-      const durations = [];
-
-      for (const period of periods) {
+      for (const period of enriched.periods) {
         const line = document.createElement("tr");
 
         const begin = document.createElement("td");
@@ -236,11 +234,8 @@ if (window.wlb === undefined) {
         }
         line.appendChild(end);
 
-        const duration = period.begin.durationUntil(period.end);
-        durations.push(duration);
-
         const len = document.createElement("td");
-        len.innerText = duration.formatted();
+        len.innerText = period.duration.formatted();
         if (period.assumedEnd) {
           len.className = 'assumed';
         }
@@ -251,11 +246,6 @@ if (window.wlb === undefined) {
 
       this.todayPeriods.appendChild(table);
 
-      const totalDuration = durations.reduce(
-        (acc, x) => acc.plus(x),
-        new Duration(0)
-      );
-
       const summary = document.createElement("div");
       summary.className = 'summary'
       const totalLabel = document.createElement("span");
@@ -263,7 +253,7 @@ if (window.wlb === undefined) {
       totalLabel.innerText = "Total";
       summary.append(totalLabel);
       summary.append(' ');
-      summary.append(totalDuration.formatted());
+      summary.append(enriched.totalDuration.formatted());
 
       this.todayPeriods.appendChild(summary);
 
@@ -274,15 +264,30 @@ if (window.wlb === undefined) {
     };
 
     Today.prototype.updateWorkingPeriods = function () {
-      const periods = this.parseWorkingPeriods()
-      const successPeriods = periods.filter(e => e.success);
+      const parsed = this.parseWorkingPeriods();
+      const success = parsed.filter(e => e.success);
+      const enriched = this.enrichWorkingPeriods(success);
       // console.debug(periods);
       this.cleanContent();
-      if (successPeriods.length === 0 && periods.length > 0) {
+      if (enriched.periods.length === 0 && parsed.length > 0) {
         this.renderParseError();
-      } else if (successPeriods.length > 0) {
-        this.renderData(successPeriods);
+      } else if (enriched.periods.length > 0) {
+        this.renderData(enriched);
       }
+    };
+
+    Today.prototype.enrichWorkingPeriods = function (periods) {
+      const durations = [];
+      for (const period of periods) {
+        const duration = period.begin.durationUntil(period.end);
+        period.duration = duration;
+        durations.push(duration);
+      }
+      const totalDuration = durations.reduce((acc, x) => acc.plus(x), new Duration(0));
+      return {
+        periods,
+        totalDuration
+      };
     };
 
 
