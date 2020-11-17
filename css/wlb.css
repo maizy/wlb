@@ -73,3 +73,9 @@ table.periods-table {
   .summary .value-label {
     font-weight: bold;
   }
+
+input.inline {
+  width: 50px;
+  border: 0;
+  border-bottom: 1px dashed black;
+}
