@@ -19,7 +19,7 @@
 
   <div id="grid">
     <div id="input" class="grid-cell">
-      <h3>Worktime</h3>
+      <h3 class="first-header">Worktime</h3>
       <textarea class="input-area" id="time-input"></textarea>
       <div class="description">
         <p>One work period per line. Only the 24-hour clock format is supported for now.</p>
@@ -36,8 +36,13 @@
     </div>
     <div id="days" class="grid-cell">
       <div id="current-day">
-        <h3>Today</h3>
+        <h3 class="first-header">Today</h3>
         <div id="today-periods"></div>
+      </div>
+      <div id="configs">
+        <h3>Work schedule</h3>
+        I work <input class="inline" id="work-time" value="8h"/> per day
+        with an approximate <input class="inline" id="lunch-break" value="1h"/> break for lunch.
       </div>
 <!--      <div id="previous-days">-->
 <!--        <h3>Previous days</h3>-->
