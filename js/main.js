@@ -70,7 +70,7 @@ if (window.wlb === undefined) {
     }
 
     Time.prototype.formatted = function () {
-      const minuteStr = (this.minute + '').padStart(2, '0');
+      const minuteStr = (this.minute + "").padStart(2, "0");
       return this.hour + ":" + minuteStr;
     };
 
@@ -177,11 +177,11 @@ if (window.wlb === undefined) {
       if (hours > 0) {
         const hourMinutes = this.minutes % 60;
         if (hourMinutes !== 0) {
-          return hours + 'h ' + (this.minutes % 60) + 'm';
+          return hours + "h " + (this.minutes % 60) + "m";
         }
-        return hours + 'h';
+        return hours + "h";
       }
-      return this.minutes + 'm';
+      return this.minutes + "m";
     };
 
     Duration.prototype.plus = function (other) {
@@ -241,8 +241,10 @@ if (window.wlb === undefined) {
       this.lunchBreak = document.getElementById("lunch-break");
       this.todayPeriods = document.getElementById("today-periods");
 
-      this.timeInput.addEventListener("input", this.updateWorkingPeriods.bind(this));
-      this.timeInput.addEventListener("change", this.updateWorkingPeriods.bind(this));
+      for (const el of [this.timeInput, this.lunchBreak, this.workTime]) {
+        el.addEventListener("input", this.updateWorkingPeriods.bind(this));
+        el.addEventListener("change", this.updateWorkingPeriods.bind(this));
+      }
       this.updateWorkingPeriods();
       this.updateInterval = setInterval(this.updateWorkingPeriods.bind(this), 5000);
     };
@@ -321,10 +323,19 @@ if (window.wlb === undefined) {
       const lenHeader = document.createElement("th");
       lenHeader.innerText = "Length";
       header.appendChild(lenHeader);
+
+      let badgesHeader = document.createElement("th");
+      badgesHeader.className = "badges";
+      header.append(badgesHeader);
+
       table.append(header);
 
       for (const period of enriched.periods) {
         const line = document.createElement("tr");
+
+        if (period.estimation) {
+          line.className = "estimation";
+        }
 
         const begin = document.createElement("td");
         begin.innerText = period.begin.formatted();
@@ -335,37 +346,52 @@ if (window.wlb === undefined) {
         if (period.assumedEnd) {
           end.className = 'assumed';
         }
-        // FIXME add badge
-        if (period.estimateEnd !== undefined) {
-          end.innerText += '\nest: ' + period.estimateEnd.formatted();
-        }
         line.appendChild(end);
 
         const len = document.createElement("td");
         len.innerText = period.duration.formatted();
         if (period.assumedEnd) {
-          len.className = 'assumed';
+          len.className = "assumed";
         }
         line.appendChild(len);
+
+        const badges = document.createElement("td");
+        badges.className = "badges";
+
+        if (period.estimatedEnd !== undefined) {
+          const estimatedEnd = document.createElement("div");
+          estimatedEnd.className = "badge estimate-badge";
+          estimatedEnd.innerText = "until " + period.estimatedEnd.formatted();
+          badges.appendChild(estimatedEnd);
+        }
+
+        if (period.estimation) {
+          const estimation = document.createElement("div");
+          estimation.className = "badge estimate-badge";
+          estimation.innerText = "estimation";
+          badges.appendChild(estimation);
+        }
+
+        line.appendChild(badges);
 
         table.appendChild(line);
       }
       this.todayPeriods.appendChild(table);
 
       const summary = document.createElement("div");
-      summary.className = 'summary'
+      summary.className = "summary"
       const totalLabel = document.createElement("span");
       totalLabel.className = "value-label";
       totalLabel.innerText = "Total";
       summary.append(totalLabel);
-      summary.append(' ');
+      summary.append(" ");
       summary.append(enriched.totalDuration.formatted());
       this.todayPeriods.appendChild(summary);
 
     };
 
     Today.prototype.cleanContent = function () {
-      this.todayPeriods.innerHTML = '';
+      this.todayPeriods.innerHTML = "";
     };
 
     Today.prototype.updateWorkingPeriods = function () {
@@ -414,21 +440,73 @@ if (window.wlb === undefined) {
 
       let elapsed = null;
       if (workTime.gt(totalDuration)) {
-        elapsed = workTime.minus(totalDuration);
-        if (totalBreaks.minutes === 0 || totalBreaks.minutes < lunchBreak.minutes * TodayHelpers.minimumBreakRatio) {
+        const elapsedTimeToWorkToday = workTime.minus(totalDuration);
+        const hasBreakToday = totalBreaks.minutes > 0 &&
+          totalBreaks.minutes >= lunchBreak.minutes * TodayHelpers.minimumBreakRatio;
+
+        elapsed = elapsedTimeToWorkToday;
+        if (!hasBreakToday) {
           elapsed = elapsed.plus(lunchBreak);
+        }
+
+        let lastOpenPeriod = null;
+        let lastClosedPeriod = null;
+        for (let index = periods.length - 1; index >= 0; index--) {
+          if (periods[index].assumedEnd && lastOpenPeriod === null) {
+            lastOpenPeriod = periods[index];
+          }
+
+          if (periods[index].assumedEnd === undefined && lastClosedPeriod === null) {
+            lastClosedPeriod = periods[index];
+          }
+        }
+
+        // estimate end for last open period
+        if (periods.length > 0 && lastOpenPeriod !== null) {
+          lastOpenPeriod.estimatedEnd = lastOpenPeriod.end.plus(elapsed);
+
+        // estimate periods if no periods for today
+        } else if (periods.length === 0) {
+          const now = Time.Now();
+          const firstDuration = new Duration(Math.floor(workTime.minutes / 2));
+          const secondDuration = workTime.minus(firstDuration);
+          periods.push({
+            begin: now,
+            end: now.plus(firstDuration),
+            duration: firstDuration,
+            success: true,
+            estimation: true
+          });
+          const secondPerionBegin = now.plus(firstDuration).plus(lunchBreak);
+          periods.push({
+            begin: secondPerionBegin,
+            end: secondPerionBegin.plus(secondDuration),
+            duration: secondDuration,
+            success: true,
+            estimation: true
+          });
+        // estimate periods and break if last period is closed
+        } else {
+          let begin = Time.Now();
+          const currentBreakTime = lastClosedPeriod === null ?
+            new Duration(0) : lastClosedPeriod.end.durationUntil(begin);
+
+          if (!hasBreakToday) {
+            const remainingBreak = lunchBreak.minus(currentBreakTime);
+            begin = begin.plus(remainingBreak);
+          }
+
+          periods.push({
+            begin,
+            end: begin.plus(elapsedTimeToWorkToday),
+            duration: elapsedTimeToWorkToday,
+            success: true,
+            estimation: true
+          });
         }
       }
 
-      if (elapsed !== null && periods.length > 0 && periods[periods.length - 1].assumedEnd) {
-        periods[periods.length - 1].estimateEnd = periods[periods.length - 1].end.plus(elapsed);
-      }
-      // TODO: estimate next periods
-
       // console.debug("breaks", breaks);
-      // if (elapsed !== null) {
-      //   console.debug("elapsed", elapsed.formatted());
-      // }
 
       return {
         periods,
