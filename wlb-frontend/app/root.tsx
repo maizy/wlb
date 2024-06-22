@@ -5,7 +5,10 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-import "./tailwind.css";
+
+import "./css/normalize.css";
+import "./css/main.css";
+import "./css/wlb.css";
 
 export function Layout({children}: { children: React.ReactNode }) {
   return (

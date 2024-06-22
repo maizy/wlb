@@ -1,9 +1,11 @@
 import type {MetaFunction} from "@remix-run/node";
 
+import {consts} from "~/consts";
+
 export const meta: MetaFunction = () => {
   return [
-    {title: "WLB Ither"},
-    {name: "description", content: "Work-Life Balance Tracker"},
+    consts.title("Other page"),
+    consts.description,
   ];
 };
 
