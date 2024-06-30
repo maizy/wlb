@@ -40,14 +40,17 @@ h1 .app-version {
   margin-left: 1em;
 }
 
-pre.input-example {
+.input-example {
   width: 150px;
-  padding: 0.2em;
-  padding-left: 1em;
+  padding: 0.2em 0.2em 0.2em 1em;
   margin: 0;
   border: 1px solid #fff;
+  font-family: monospace;
+  white-space: pre;
+  text-align: left;
+  background: none;
 }
-pre.input-example:hover {
+.input-example:hover {
   border: 1px dashed #111;
   cursor: pointer;
 }

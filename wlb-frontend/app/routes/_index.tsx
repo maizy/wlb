@@ -8,6 +8,7 @@ import {enrichWorkPeriods} from "~/intelligence/workday";
 import {Duration} from "~/data/duration";
 import {TodayWorkPeriods} from "~/component/TodayWorkPeriods";
 import {TodaySummary} from "~/component/TodaySummary";
+import {PeriodsExample} from "~/component/PeriodsExample";
 
 export const meta: MetaFunction = () => {
   return [
@@ -18,12 +19,6 @@ export const meta: MetaFunction = () => {
 
 // FIXME: extract settings to component
 const settings = new WorkdaySettings(new Duration(8 * 60), new Duration(60));
-
-const examples = `\
-9-15 14-45
-15:00 - 15:30
-16 - 17
-18`;
 
 export default function Index() {
 
@@ -53,10 +48,7 @@ export default function Index() {
           <p>One work period per line. Only the 24-hour clock format is supported for now.</p>
           <p>If an end time is omitted current time is assumed.</p>
           <p>Try to use any time format you like.</p>
-          <div>
-            Example:<br/>
-            <pre className="input-example">{examples}</pre>
-          </div>
+          <PeriodsExample setWorkPeriodsSpec={setWorkPeriodsSpec}/>
           <p>All entered data are saved locally in your browser only.</p>
         </div>
       </div>
