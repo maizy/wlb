@@ -55,7 +55,7 @@ export class Duration {
   }
 }
 
-export function parse(value: string): Duration {
+export function parseDuration(value: string): Duration {
   value = value.toLowerCase();
   if (value.match(onlyNumericRegExp)) {
     return new Duration(parseInt(value) * 60);
