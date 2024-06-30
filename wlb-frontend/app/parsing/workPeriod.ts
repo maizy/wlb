@@ -1,5 +1,5 @@
 import {Line} from "~/data/line";
-import {Time, now} from "~/data/time";
+import {Time} from "~/data/time";
 
 const timeRegExp = new RegExp(/^\s*(?<hour>[0-9]+)[^0-9]*(?<minute>[0-9]*)\s*$/);
 const beginEndRegExp = new RegExp(/\s+[a-z\-–\t]*\s*/, "i");
@@ -17,7 +17,7 @@ function parseTime(time: string): Time | undefined {
   return undefined;
 }
 
-function parseLine(line: string): Line {
+function parseLine(line: string, now: Time): Line {
   const parts = line.trim().split(beginEndRegExp).filter(x => x.length > 0);
   let begin: Time | undefined = undefined;
   let end: Time | undefined = undefined;
@@ -26,7 +26,7 @@ function parseLine(line: string): Line {
   if (parts.length === 1) {
     begin = parseTime(parts[0]);
     if (begin !== null) {
-      end = now();
+      end = now;
       assumedEnd = true;
       success = true;
     }
@@ -46,6 +46,6 @@ function parseLine(line: string): Line {
   )
 }
 
-export function parseWorkPeriodsSpec(value: string): Line[] {
-  return value.trim().split(newLineRegExp).map(parseLine);
+export function parseWorkPeriodsSpec(value: string, now: Time): Line[] {
+  return value.trim().split(newLineRegExp).map(line => parseLine(line, now));
 }

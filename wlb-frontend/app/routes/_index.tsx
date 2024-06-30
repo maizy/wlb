@@ -14,6 +14,7 @@ import {TodaySummary} from "~/component/TodaySummary";
 import {PeriodsExample} from "~/component/PeriodsExample";
 import {WorkdaySettingsComponent} from "~/component/WorkdaySettingsComponent";
 import useStoredState from "~/hook/useStoredState";
+import {useCurrentTime} from "~/hook/useCurrentTime";
 
 export const meta: MetaFunction = () => {
   return [
@@ -33,13 +34,14 @@ export default function Index() {
     setWorkPeriodsSpec(e.currentTarget.value);
   };
 
-  const lines = parseWorkPeriodsSpec(workPeriodsSpec);
+  const now = useCurrentTime();
+  const lines = parseWorkPeriodsSpec(workPeriodsSpec, now);
   const periods = lines.flatMap(line => {
     return line.success && line.begin && line.end ?
       [new WorkPeriod(line.begin, line.end, false, line.assumedEnd)]
       : [];
   });
-  const enriched = enrichWorkPeriods(periods, workdaySettings);
+  const enriched = enrichWorkPeriods(periods, workdaySettings, now);
 
   return (
   <>

@@ -74,7 +74,7 @@ export function fromMinutesOfDay(minutes: number): Time {
   return new Time(Math.floor(minutes / 60), minutes % 60);
 }
 
-export function now(): Time {
+export function makeTime(): Time {
   const now = new Date();
   return new Time(now.getHours(), now.getMinutes());
 }

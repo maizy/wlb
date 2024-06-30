@@ -1,7 +1,7 @@
 import {WorkPeriod} from "~/data/workPeriod";
 import {Duration} from "~/data/duration";
 import {WorkdaySettings} from "~/data/workdaySettings";
-import {now} from "~/data/time";
+import {Time} from "~/data/time";
 
 export interface EnrichedWorkPeriods {
   periods: WorkPeriod[];
@@ -10,7 +10,7 @@ export interface EnrichedWorkPeriods {
   remaining: Duration;
 }
 
-export function enrichWorkPeriods(periods: WorkPeriod[], settings: WorkdaySettings): EnrichedWorkPeriods {
+export function enrichWorkPeriods(periods: WorkPeriod[], settings: WorkdaySettings, now: Time): EnrichedWorkPeriods {
   const durations: Duration[] = [];
   const breaks: Duration[] = [];
   periods.sort((a, b) => {
@@ -64,7 +64,7 @@ export function enrichWorkPeriods(periods: WorkPeriod[], settings: WorkdaySettin
 
     // estimate periods if no periods for today
     } else if (periods.length === 0) {
-      const currentTime = now();
+      const currentTime = now;
       const firstDuration = new Duration(Math.floor(settings.workTime.minutes / 2));
       const secondDuration = settings.workTime.minus(firstDuration);
       periods.push(new WorkPeriod(
@@ -80,7 +80,7 @@ export function enrichWorkPeriods(periods: WorkPeriod[], settings: WorkdaySettin
       ));
     // estimate periods and break if last period is closed
     } else {
-      let begin = now();
+      let begin = now;
       const currentBreakTime = lastClosedPeriod === null ?
         new Duration(0) : lastClosedPeriod.end.durationUntil(begin);
 
