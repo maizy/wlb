@@ -1,0 +1,1 @@
+import{j as r}from"./jsx-runtime-56DGgGmo.js";import{c as t}from"./consts-DptBCB4Y.js";const o=()=>[t.title("Other page"),t.description];function i(){return r.jsx("div",{children:"Test"})}export{i as default,o as meta};
