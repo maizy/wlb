@@ -3,7 +3,7 @@ import {WorkdaySettings} from "~/data/workdaySettings";
 import {parseDuration} from "~/data/duration";
 
 export function WorkdaySettingsComponent(
-  prop: {workdaySettings: WorkdaySettings, setWorkdaySettings: React.Dispatch<React.SetStateAction<WorkdaySettings>>}
+  prop: {workdaySettings: WorkdaySettings, setWorkdaySettings: (value: WorkdaySettings) => void}
 ): JSX.Element {
 
   const onWorkTimeChanged = ((e: React.FormEvent<HTMLInputElement>) => {

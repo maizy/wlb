@@ -1,4 +1,4 @@
-import React, {JSX} from "react";
+import {JSX} from "react";
 
 const examples = `\
 9-15 14-45
@@ -6,7 +6,7 @@ const examples = `\
 16 - 17
 18`;
 
-export function PeriodsExample(prop: {setWorkPeriodsSpec: React.Dispatch<React.SetStateAction<string>>}): JSX.Element {
+export function PeriodsExample(prop: {setWorkPeriodsSpec: (value: string) => void}): JSX.Element {
   return (
     <div>
       Example:<br/>

@@ -1,14 +1,19 @@
 import type {MetaFunction} from "@remix-run/node";
-import {useState} from "react";
 import {consts} from "~/consts";
 import {parseWorkPeriodsSpec} from "~/parsing/workPeriod";
 import {WorkPeriod} from "~/data/workPeriod";
-import {defaultSettings, WorkdaySettings} from "~/data/workdaySettings";
+import {
+  defaultSettings,
+  deserializeWorkdaySettings,
+  serializeWorkdaySettings,
+  WorkdaySettings
+} from "~/data/workdaySettings";
 import {enrichWorkPeriods} from "~/intelligence/workday";
 import {TodayWorkPeriods} from "~/component/TodayWorkPeriods";
 import {TodaySummary} from "~/component/TodaySummary";
 import {PeriodsExample} from "~/component/PeriodsExample";
 import {WorkdaySettingsComponent} from "~/component/WorkdaySettingsComponent";
+import useStoredState from "~/hook/useStoredState";
 
 export const meta: MetaFunction = () => {
   return [
@@ -19,8 +24,10 @@ export const meta: MetaFunction = () => {
 
 export default function Index() {
 
-  const [workPeriodsSpec, setWorkPeriodsSpec] = useState<string>('');
-  const [workdaySettings, setWorkdaySettings] = useState<WorkdaySettings>(defaultSettings);
+  const [workPeriodsSpec, setWorkPeriodsSpec] = useStoredState<string>('work-periods', '', x => x, x => x);
+  const [workdaySettings, setWorkdaySettings] = useStoredState<WorkdaySettings>(
+    'workday-settings', defaultSettings, serializeWorkdaySettings, deserializeWorkdaySettings
+  );
 
   const onValueChange = (e: React.FormEvent<HTMLTextAreaElement>) => {
     setWorkPeriodsSpec(e.currentTarget.value);
