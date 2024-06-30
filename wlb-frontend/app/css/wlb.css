@@ -45,6 +45,7 @@ pre.input-example {
   padding: 0.2em;
   padding-left: 1em;
   margin: 0;
+  border: 1px solid #fff;
 }
 pre.input-example:hover {
   border: 1px dashed #111;
