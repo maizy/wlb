@@ -1,19 +1,19 @@
 import {Line} from "../data/line";
 import {Time} from "../data/time";
 
-const timeRegExp = new RegExp(/^\s*(?<hour>[0-9]+)[^0-9]*(?<minute>[0-9]*)\s*$/);
+const timeRegExp = new RegExp(/^\s*([0-9]+)[^0-9]*([0-9]*)\s*$/);
 const beginEndRegExp = new RegExp(/\s+[a-z\-–\t]*\s*/, "i");
 const newLineRegExp = new RegExp(/\r?\n/);
 
 /** @private */
 export function parseTime(time: string): Time | undefined {
   const timeMatch = time.match(timeRegExp);
-  if (timeMatch && timeMatch.groups?.hour) {
+  if (timeMatch && timeMatch[1]) {
     let minute = 0;
-    if (timeMatch.groups.minute) {
-      minute = parseInt(timeMatch.groups.minute) || 0;
+    if (timeMatch[2]) {
+      minute = parseInt(timeMatch[2]) || 0;
     }
-    return new Time(parseInt(timeMatch.groups.hour), minute);
+    return new Time(parseInt(timeMatch[1]), minute);
   }
   return undefined;
 }

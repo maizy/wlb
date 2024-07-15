@@ -1,5 +1,3 @@
-import {expect, test} from '@jest/globals';
-
 import {Time} from "../data/time";
 import {parseTime} from "./workPeriod";
 
