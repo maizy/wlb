@@ -5,7 +5,8 @@ const timeRegExp = new RegExp(/^\s*(?<hour>[0-9]+)[^0-9]*(?<minute>[0-9]*)\s*$/)
 const beginEndRegExp = new RegExp(/\s+[a-z\-–\t]*\s*/, "i");
 const newLineRegExp = new RegExp(/\r?\n/);
 
-function parseTime(time: string): Time | undefined {
+/** @private */
+export function parseTime(time: string): Time | undefined {
   const timeMatch = time.match(timeRegExp);
   if (timeMatch && timeMatch.groups?.hour) {
     let minute = 0;
@@ -17,7 +18,8 @@ function parseTime(time: string): Time | undefined {
   return undefined;
 }
 
-function parseLine(line: string, now: Time): Line {
+/** @private */
+export function parseLine(line: string, now: Time): Line {
   const parts = line.trim().split(beginEndRegExp).filter(x => x.length > 0);
   let begin: Time | undefined = undefined;
   let end: Time | undefined = undefined;
