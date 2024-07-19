@@ -1,12 +1,13 @@
-import {StyleSheet, Text, TextInput} from "react-native";
-import {makeTime} from "wlb-intelligence/data/time";
+import {Platform, StyleSheet, Text, TextInput, View} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
-import {useState} from "react";
 import {parseWorkPeriodsSpec} from "wlb-intelligence/parsing/workPeriod";
 import {WorkPeriod} from "wlb-intelligence/data/workPeriod";
 import {enrichWorkPeriods} from "wlb-intelligence/intelligence/workday";
 import {WorkdaySettings} from "wlb-intelligence/data/workdaySettings";
 import {Duration} from "wlb-intelligence/data/duration";
+import {TodayWorkPeriods} from "@/components/TodayWorkPeriods";
+import {useCurrentTime} from "@/hooks/useCurrentTime";
+import useStoredState from "@/hooks/useStoredState";
 
 const styles = StyleSheet.create({
   logo: {
@@ -20,17 +21,21 @@ const styles = StyleSheet.create({
     padding: 3,
     borderWidth: 0.5,
     minHeight: 150,
-    textAlignVertical: "top"
+    ...Platform.select({
+      android: {
+        textAlignVertical: 'top',
+      },
+    })
   },
 });
 
 const workdaySettings = new WorkdaySettings(new Duration(8 * 60), new Duration(60));
 
 export default function Index() {
-  const now = makeTime();
-  const [workPeriodsSpec, onChangeWorkPeriodsSpec] = useState(`9:00 - ${now.formatted}`);
+  const now = useCurrentTime();
+  const [workPeriodsSpec, setWorkPeriodsSpec] = useStoredState<string>('work-periods', '', x => x, x => x);
   const onChange = (text: string) => {
-    onChangeWorkPeriodsSpec(text)
+    setWorkPeriodsSpec(text)
   };
 
   const lines = parseWorkPeriodsSpec(workPeriodsSpec, now);
@@ -41,16 +46,6 @@ export default function Index() {
   });
   const enriched = enrichWorkPeriods(periods, workdaySettings, now);
 
-  const textRes = new Array<string>();
-  textRes.push(`Now: ${now.formatted}`);
-  textRes.push(`Elapsed: ${enriched.elapsed.formatted}`);
-  textRes.push(`Remaining: ${enriched.remaining.formatted}`);
-  textRes.push(`Breaks: ${enriched.breaks.formatted}`);
-  textRes.push("Periods:");
-  for (const period of enriched.periods) {
-    textRes.push(period.formatted);
-  }
-
   return (
     <SafeAreaView style={{padding: 10}}>
       <Text style={styles.logo}>WLB</Text>
@@ -58,10 +53,13 @@ export default function Index() {
         style={styles.input}
         multiline={true}
         value={workPeriodsSpec}
-        autoComplete={"off"}
+        autoComplete="off"
         onChangeText={onChange}
       ></TextInput>
-      <Text>{textRes.join("\n")}</Text>
+      <View style={{marginTop: 15}}>
+        <Text style={{fontSize: 18, fontFamily: 'Merriweather_700Bold'}}>Today</Text>
+        <TodayWorkPeriods periods={enriched.periods} style={{marginTop: 10}}/>
+      </View>
     </SafeAreaView>
   );
 }
