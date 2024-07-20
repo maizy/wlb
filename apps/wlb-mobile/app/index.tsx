@@ -8,6 +8,7 @@ import {Duration} from "wlb-intelligence/data/duration";
 import {TodayWorkPeriods} from "@/components/TodayWorkPeriods";
 import useCurrentTime from "@/hooks/useCurrentTime";
 import useStoredState from "@/hooks/useStoredState";
+import {TodaySummary} from "@/components/TodaySummary";
 
 const styles = StyleSheet.create({
   logo: {
@@ -72,6 +73,7 @@ export default function Index() {
       <View style={styles.block}>
         <Text style={styles.blockTitle}>Today</Text>
         <TodayWorkPeriods periods={enriched.periods} style={styles.blockContent}/>
+        <TodaySummary enriched={enriched} style={{marginTop: 20}}/>
       </View>
     </SafeAreaView>
   );

@@ -11,6 +11,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     fontFamily: 'Merriweather_400Regular',
+    minWidth: 20,
   },
   badges: {
     flex: 2,
