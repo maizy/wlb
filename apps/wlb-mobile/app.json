@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "dev.maizy.wlb"
+      "package": "dev.maizy.wlb.android"
     },
     "web": {
       "bundler": "metro",
