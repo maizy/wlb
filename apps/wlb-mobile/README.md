@@ -36,7 +36,24 @@ brew install openjdk@17
 npm install -g eas-cli
 ```
 
-3. Build
+3. Add or generate build credentials
+
+sample `credentials.json`:
+```json
+{
+  "android": {
+    "keystore": {
+      "keystorePath": "credentials/android/release.jks",
+      "keystorePassword": "password",
+      "keyAlias": "dev.maizy.wlb.android",
+      "keyPassword": "password"
+    }
+  }
+}
+
+```
+
+4. Build
 
 ```bash
 # env
