@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "WLB",
+    "slug": "wlb",
+    "version": "0.3-alpha",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "wlb",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "dev.maizy.wlb.android"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "84eb4fc1-8170-4e54-b66b-d766067dd87b"
+      }
+    }
+  }
+}
