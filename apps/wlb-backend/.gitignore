@@ -3,6 +3,7 @@
 .project/
 *.iml
 .scala_dependencies
+.vscode
 
 # Mac OS X junk
 .AppleDouble
@@ -20,6 +21,12 @@ Desktop.ini
 *.class
 *.log
 
+# bloop and metals
+.bloop/
+.metals/
+project/metals.sbt
+
 # sbt
 target/
 .bsp/
+project/project/
